@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#6BAA75" />
+  <meta name="description" content="App PWA de aprendizado de inglês com base bíblica, leitura, compreensão e evangelismo." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Bible English" />
+  <title>📖 Bible English App</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <button id="backBtn" class="icon-btn hidden" aria-label="Voltar">←</button>
+        <div class="brand">
+          <div class="brand-emoji">📖</div>
+          <div>
+            <h1>Bible English App</h1>
+            <p>Aprender inglês com fé, clareza e propósito</p>
+          </div>
+        </div>
+      </div>
+      <button id="installBtn" class="install-btn hidden">Instalar app</button>
+    </header>
+
+    <main id="app" class="app-content"></main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-route="home">
+        <span>🏠</span>
+        <small>Início</small>
+      </button>
+      <button class="nav-btn" data-route="lessons">
+        <span>📚</span>
+        <small>Aulas</small>
+      </button>
+      <button class="nav-btn" data-route="flashcards">
+        <span>🧠</span>
+        <small>Flashcards</small>
+      </button>
+      <button class="nav-btn" data-route="prayer">
+        <span>🙏</span>
+        <small>Oração</small>
+      </button>
+      <button class="nav-btn" data-route="premium">
+        <span>✨</span>
+        <small>Premium</small>
+      </button>
+    </nav>
+  </div>
+
+  <template id="home-template">
+    <section class="screen screen-home">
+      <div class="hero-card">
+        <span class="hero-badge">✨ Devocional moderno</span>
+        <h2>Aprenda inglês com base bíblica</h2>
+        <p>
+          Estude versículos, vocabulário, gramática e aplicações práticas com foco
+          em leitura, compreensão e evangelismo.
+        </p>
+
+        <div class="progress-card">
+          <div class="progress-head">
+            <strong>Seu progresso</strong>
+            <span id="progressText">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <p id="progressSubtext" class="muted">0 de 5 aulas concluídas</p>
+        </div>
+
+        <div class="hero-actions">
+          <button class="primary-btn" id="startStudyBtn">Continuar estudo</button>
+          <button class="secondary-btn" id="goPrayerBtn">Abrir oração</button>
+        </div>
+      </div>
+
+      <section class="section-block">
+        <div class="section-title-row">
+          <h3>📚 Aulas disponíveis</h3>
+          <button class="ghost-btn" id="seeAllLessonsBtn">Ver todas</button>
+        </div>
+        <div id="homeLessonsPreview" class="lesson-list compact-list"></div>
+      </section>
+
+      <section class="section-block soft-block">
+        <h3>🙏 Propósito do app</h3>
+        <p>
+          Este app foi criado para transmitir paz, simplicidade, clareza e conexão
+          espiritual, unindo estudo do inglês com crescimento na fé.
+        </p>
+     
+      <section class="section-block soft-block">
+         <h3>Acessibilidade</h3>
+         <p>Ative leitura guiada, contraste visual, ajustes de fonte e preferências de navegação para uma experiência mais confortável.</p>
+         <div class="hero-actions">
+         <button class="secondary-btn" id="openAccessibilityBtn">Abrir configurações</button>
+        </div>
+      </section>
+      </section>
+    </section>
+  </template>
+
+  <template id="lessons-template">
+    <section class="screen screen-lessons">
+      <div class="section-title-row">
+        <h2>📚 Lista de aulas</h2>
+        <span class="pill" id="lessonsCountPill">5 aulas</span>
+      </div>
+      <div id="lessonsList" class="lesson-list"></div>
+    </section>
+  </template>
+
+  <template id="lesson-template">
+    <section class="screen screen-lesson">
+      <article class="lesson-detail">
+        <div class="lesson-top-card">
+          <div class="lesson-header-row">
+            <span id="lessonTag" class="pill">Aula</span>
+            <span id="lessonCompletedBadge" class="status-badge hidden">Concluída</span>
+          </div>
+          <h2 id="lessonTitle"></h2>
+          <p id="lessonRef" class="lesson-ref"></p>
+        </div>
+
+        <section class="content-card highlight-verse">
+          <h3>📖 Versículo em inglês</h3>
+          <p id="verseEn" class="verse-text"></p>
+          <h3>🇧🇷 Tradução</h3>
+          <p id="versePt" class="verse-text pt"></p>
+        </section>
+
+        <section class="content-card">
+          <h3>🔎 Leitura guiada</h3>
+          <div id="guidedReading"></div>
+        </section>
+
+        <section class="content-card">
+          <h3>📝 Vocabulário essencial</h3>
+          <div id="vocabTableWrap" class="table-wrap"></div>
+        </section>
+
+        <section class="content-card">
+          <h3>📘 Explicação gramatical</h3>
+          <p id="grammarText"></p>
+        </section>
+
+        <section class="content-card">
+          <h3>💡 Releitura com compreensão</h3>
+          <p id="reReadText"></p>
+        </section>
+
+        <section class="content-card">
+          <h3>✅ Exercícios simples</h3>
+          <div id="exerciseList" class="exercise-list"></div>
+        </section>
+
+        <section class="content-card">
+          <h3>🌱 Aplicação prática</h3>
+          <div id="applicationList"></div>
+        </section>
+
+        <section class="content-card prayer-card">
+          <h3>🙏 Oração guiada</h3>
+          <p><strong>Em inglês:</strong></p>
+          <p id="prayerEn"></p>
+          <p><strong>Tradução:</strong></p>
+          <p id="prayerPt"></p>
+          <p><strong>Versão adaptável:</strong></p>
+          <p id="prayerAdapt"></p>
+          <button class="secondary-btn full-btn" id="openPrayerScreenBtn">Abrir tela de oração</button>
+        </section>
+
+        <section class="content-card insight-card">
+          <h3>✨ Insight espiritual</h3>
+          <p id="insightText"></p>
+        </section>
+
+        <div class="lesson-actions-sticky">
+          <button id="completeLessonBtn" class="primary-btn">Marcar como concluída</button>
+          <button id="continueBtn" class="secondary-btn">Continuar</button>
+        </div>
+      </article>
+    </section>
+  </template>
+
+  <template id="prayer-template">
+    <section class="screen screen-prayer">
+      <div class="section-title-row">
+        <h2>🙏 Tela de oração</h2>
+        <span class="pill">Momento devocional</span>
+      </div>
+
+      <div class="prayer-focus-card">
+        <p class="muted">Escolha uma aula para meditar e orar:</p>
+        <select id="prayerLessonSelect" class="select-input"></select>
+      </div>
+
+      <div class="content-card">
+        <h3>Texto em inglês</h3>
+        <p id="prayerScreenEn"></p>
+      </div>
+
+      <div class="content-card">
+        <h3>Texto em português</h3>
+        <p id="prayerScreenPt"></p>
+      </div>
+
+      <div class="content-card">
+        <h3>Versão adaptável</h3>
+        <p id="prayerScreenAdapt"></p>
+      </div>
+
+      <div class="prayer-tools">
+        <button id="copyPrayerBtn" class="secondary-btn">Copiar oração</button>
+        <button id="goToLessonFromPrayerBtn" class="primary-btn">Ir para aula</button>
+      </div>
+    </section>
+  </template>
+
+  <template id="premium-template">
+    <section class="screen screen-premium">
+      <div class="premium-hero">
+        <span class="hero-badge">✨ Desbloqueio Premium</span>
+        <h2>Expanda sua jornada de aprendizado</h2>
+        <p>
+          No futuro, esta área pode liberar novas aulas, trilhas temáticas,
+          áudios, flashcards e devocionais extras.
+        </p>
+      </div>
+
+      <div class="content-card">
+        <h3>O que pode entrar no Premium</h3>
+        <ul class="feature-list">
+          <li>Mais módulos de inglês bíblico</li>
+          <li>Exercícios avançados e revisão</li>
+          <li>Áudios de pronúncia e leitura</li>
+          <li>Plano devocional ampliado</li>
+          <li>Conteúdos exclusivos para evangelismo</li>
+        </ul>
+      </div>
+
+      <div class="content-card">
+        <h3>Liberar depois</h3>
+        <p>
+          Clique no botão abaixo para ter seu acesso premium liberado.😇
+        </p>
+        <a id="premiumLinkBtn" class="primary-btn full-btn link-btn" href="#" target="_blank" rel="noopener">
+          Desbloquear Premium
+        </a>
+      </div>
+    </section>
+  </template>
+
+<template id="flashcards-template">
+  <section class="screen screen-flashcards">
+    <div class="section-title-row">
+      <h2>🧠 Flashcards</h2>
+      <span class="pill">Direção espiritual</span>
+    </div>
+
+    <div id="flashcardsHomeList" class="flashcards-home-list"></div>
+  </section>
+</template>
+
+<template id="flashcard-list-template">
+  <section class="screen screen-flashcard-list">
+    <div class="section-title-row">
+      <h2 id="flashcardListTitle">🧠 Flashcards</h2>
+      <span class="pill" id="flashcardListCount">45 itens</span>
+    </div>
+
+    <div class="content-card">
+      <p id="flashcardListSubtitle" class="muted"></p>
+      <div id="flashcardNumberGrid" class="flashcard-number-grid"></div>
+    </div>
+  </section>
+</template>
+
+<template id="flashcard-item-template">
+  <section class="screen screen-flashcard-item">
+    <div class="lesson-top-card">
+      <div class="lesson-header-row">
+        <span id="flashcardItemTag" class="pill">Flashcard</span>
+        <span id="flashcardItemProgress" class="status-badge">Em estudo</span>
+      </div>
+      <h2 id="flashcardItemTitle"></h2>
+      <p id="flashcardItemRef" class="lesson-ref"></p>
+    </div>
+
+   <section class="content-card">
+  <h3>Cartões interativos</h3>
+  <div class="flashcard-flip-grid">
+    <button class="flash-flip-card flash-flip-card-en" id="cardEnBtn" type="button">
+      <div class="flash-flip-card-inner">
+        <div class="flash-flip-face flash-flip-front">
+          <span>Inglês</span>
+          <strong>Toque para revelar</strong>
+        </div>
+        <div class="flash-flip-face flash-flip-back">
+          <span>Inglês</span>
+          <strong id="flashcardEnText"></strong>
+        </div>
+      </div>
+    </button>
+
+    <button class="flash-flip-card flash-flip-card-pt" id="cardPtBtn" type="button">
+      <div class="flash-flip-card-inner">
+        <div class="flash-flip-face flash-flip-front">
+          <span>Tradução</span>
+          <strong>Toque para revelar</strong>
+        </div>
+        <div class="flash-flip-face flash-flip-back">
+          <span>Tradução</span>
+          <strong id="flashcardPtText"></strong>
+        </div>
+      </div>
+    </button>
+  </div>
+</section>
+
+      <div class="audio-btn-row">
+        <button class="secondary-btn audio-inline-btn" id="speakExpressionBtn">Ouvir expressão</button>
+        <button class="secondary-btn audio-inline-btn" id="speakExampleBtn">Ouvir exemplo</button>
+      </div>
+    </section>
+
+    <section class="content-card">
+      <h3>📘 Significado</h3>
+      <p id="flashcardMeaning"></p>
+    </section>
+
+    <section class="content-card">
+      <h3>📖 Contexto Bíblico</h3>
+      <p id="flashcardContext"></p>
+    </section>
+
+    <section class="content-card">
+      <h3>🗣️ Exemplo em Inglês</h3>
+      <p id="flashcardExampleEn"></p>
+    </section>
+
+    <section class="content-card">
+      <h3>🇧🇷 Tradução do Exemplo</h3>
+      <p id="flashcardExamplePt"></p>
+    </section>
+
+    <section class="content-card">
+      <h3>🌱 Aplicação Espiritual</h3>
+      <p id="flashcardApplication"></p>
+    </section>
+  </section>
+</template>
+
+  <template id="empty-template">
+    <section class="screen">
+      <div class="content-card">
+        <h2>Conteúdo não encontrado</h2>
+        <p>Volte para a tela inicial para continuar navegando.</p>
+        <button class="primary-btn" id="goHomeFromEmpty">Ir para início</button>
+      </div>
+    </section>
+  </template>
+
+<template id="accessibility-template">
+  <section class="screen screen-accessibility">
+    <div class="section-title-row">
+      <h2>Acessibilidade</h2>
+      <span class="pill">Leitura e visual</span>
+    </div>
+
+    <section class="content-card">
+      <h3>Recursos principais</h3>
+      <p>Ative a leitura guiada, controle a exibição do leitor flutuante e escolha um preset visual confortável para uso contínuo.</p>
+
+      <div class="settings-stack">
+        <label class="settings-row">
+          <span>Acessibilidade ativa</span>
+          <input type="checkbox" id="a11yEnabledToggle" />
+        </label>
+
+        <label class="settings-row">
+          <span>Mostrar botão leitor</span>
+          <input type="checkbox" id="a11yReaderToggle" />
+        </label>
+      </div>
+    </section>
+
+    <section class="content-card">
+      <h3>Preset visual</h3>
+      <div class="settings-stack">
+        <label class="settings-choice">
+          <input type="radio" name="visualPreset" value="default" checked />
+          <span>Padrão</span>
+        </label>
+        <label class="settings-choice">
+          <input type="radio" name="visualPreset" value="high-contrast" />
+          <span>Alto contraste</span>
+        </label>
+        <label class="settings-choice">
+          <input type="radio" name="visualPreset" value="dark-mode" />
+          <span>Modo escuro</span>
+        </label>
+        <label class="settings-choice">
+          <input type="radio" name="visualPreset" value="yellow-mode" />
+          <span>Amarelo suave</span>
+        </label>
+        <label class="settings-choice">
+          <input type="radio" name="visualPreset" value="soft-blue" />
+          <span>Azul suave</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="content-card">
+      <h3>Texto e leitura</h3>
+
+      <div class="settings-stack">
+        <label class="settings-field">
+          <span>Tamanho da fonte</span>
+          <select id="a11yFontScale">
+            <option value="1">Padrão</option>
+            <option value="1.08">Levemente maior</option>
+            <option value="1.16">Maior</option>
+            <option value="1.24">Muito maior</option>
+          </select>
+        </label>
+
+        <label class="settings-field">
+          <span>Velocidade da leitura</span>
+          <select id="a11yTtsRate">
+            <option value="0.8">0.8</option>
+            <option value="0.9" selected>0.9</option>
+            <option value="1">1.0</option>
+            <option value="1.1">1.1</option>
+          </select>
+        </label>
+
+        <label class="settings-field">
+          <span>Entonação da leitura</span>
+          <select id="a11yTtsPitch">
+            <option value="0.9">0.9</option>
+            <option value="1" selected>1.0</option>
+            <option value="1.1">1.1</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="content-card">
+      <h3>Restaurar</h3>
+      <p>Use o reset seletivo para limpar apenas preferências de acessibilidade, sem afetar premium, aulas e progresso geral.</p>
+      <div class="hero-actions">
+        <button id="resetA11yBtn" class="secondary-btn">Resetar acessibilidade</button>
+      </div>
+    </section>
+  </section>
+</template>
+
+  <div id="toast" class="toast hidden"></div>
+  <!-- 🔥 NOVO: Modal premium sem redirecionamento -->
+  <div id="accessibilityOnboarding" class="a11y-onboarding hidden" aria-hidden="true">
+  <div class="a11y-onboarding-backdrop"></div>
+  <div class="a11y-onboarding-card" role="dialog" aria-modal="true" aria-labelledby="a11yOnboardingTitle">
+    <span class="hero-badge">Acessibilidade</span>
+    <h2 id="a11yOnboardingTitle">Deseja ativar recursos de acessibilidade?</h2>
+    <p>Você pode habilitar leitura guiada, contraste visual, ajustes de fonte e um botão leitor global para navegar com mais conforto.</p>
+
+    <label class="a11y-checkbox-row">
+      <input type="checkbox" id="skipA11yOnboarding" />
+      <span>Não mostrar novamente</span>
+    </label>
+
+    <div class="a11y-onboarding-actions">
+      <button id="enableA11yBtn" class="primary-btn">Ativar acessibilidade</button>
+      <button id="disableA11yBtn" class="secondary-btn">Agora não</button>
+    </div>
+  </div>
+</div>
+
+<div id="accessibilityPresetModal" class="a11y-onboarding hidden" aria-hidden="true">
+  <div class="a11y-onboarding-backdrop"></div>
+  <div class="a11y-onboarding-card" role="dialog" aria-modal="true" aria-labelledby="a11yPresetModalTitle">
+    <span class="hero-badge">Visual</span>
+    <h2 id="a11yPresetModalTitle">Escolha um preset visual</h2>
+    <p>Selecione o estilo visual mais confortável. Esta tela também será lida automaticamente quando aberta.</p>
+
+    <div class="settings-stack">
+      <label class="settings-choice">
+        <input type="radio" name="startupVisualPreset" value="default" checked />
+        <span>Padrão</span>
+      </label>
+      <label class="settings-choice">
+        <input type="radio" name="startupVisualPreset" value="high-contrast" />
+        <span>Alto contraste</span>
+      </label>
+      <label class="settings-choice">
+        <input type="radio" name="startupVisualPreset" value="dark-mode" />
+        <span>Modo escuro</span>
+      </label>
+      <label class="settings-choice">
+        <input type="radio" name="startupVisualPreset" value="yellow-mode" />
+        <span>Amarelo suave</span>
+      </label>
+      <label class="settings-choice">
+        <input type="radio" name="startupVisualPreset" value="soft-blue" />
+        <span>Azul suave</span>
+      </label>
+    </div>
+
+    <div class="a11y-onboarding-actions">
+      <button id="saveA11yPresetBtn" class="primary-btn">Confirmar preset</button>
+    </div>
+  </div>
+</div>
+
+<button id="readerFab" class="reader-fab hidden" type="button" aria-label="Ler conteúdo da tela" aria-pressed="false">
+  Ler tela
+</button>
+  <div id="premiumModal" class="premium-modal hidden" aria-hidden="true">
+    <div class="premium-backdrop" data-close-premium></div>
+    <div class="premium-modal-card" role="dialog" aria-modal="true" aria-labelledby="premiumModalTitle">
+      <span class="hero-badge">✨ Conteúdo Premium</span>
+      <h2 id="premiumModalTitle">Esta aula está bloqueada</h2>
+      <h2>Desbloqueie o curso completo</h2>
+      <p>Acesse todas as 30 aulas completas.</p>
+      <button onclick="ativarPremium()">
+         Falar no WhatsApp
+      </button>
+      <hr>
+      <h3>Já comprou?</h3>
+      <input type="text" id="codigoPremium" placeholder="Digite seu código">
+      <button onclick="validarCodigo()">
+         Ativar acesso
+      </button>
+      <p>As aulas 1 a 5 estão liberadas. Para acessar as próximas aulas, ative o modo Premium.</p>
+      <div class="premium-modal-actions">
+        <button id="premiumModalActivateBtn" class="primary-btn">Ativar Premium</button>
+        <button id="premiumModalCloseBtn" class="secondary-btn">Agora não</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
