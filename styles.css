@@ -1049,12 +1049,26 @@ body.a11y-font-scale {
 
 .flash-flip-card-en .flash-flip-front::before,
 .flash-flip-card-en .flash-flip-back::before {
-  background-image: url("./assets/flashcards/flashcard-en.webp");
+   background-image: url('images/flashcard-en.webp');
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+    /* Torna o texto legível sobre a imagem */
+   color: white;
+   text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+   background-color: rgba(0,0,0,0.3); /* fallback + escurece levemente */
+   background-blend-mode: overlay;
 }
 
 .flash-flip-card-pt .flash-flip-front::before,
 .flash-flip-card-pt .flash-flip-back::before {
-  background-image: url("./assets/flashcards/flashcard-pt.webp");
+  background-image: url('images/flashcard-pt.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  background-blend-mode: overlay;
 }
 
 .flash-flip-front {
